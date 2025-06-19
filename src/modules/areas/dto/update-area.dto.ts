@@ -1,4 +1,21 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateAreaDto } from './create-area.dto';
+import { Injectable } from '@nestjs/common';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Floor_Number } from '../entities/area.entity';
 
-export class UpdateAreaDto extends PartialType(CreateAreaDto) {}
+@Injectable()
+export class UpdateAreaDto {
+  @IsNotEmpty({ message: 'Id khu vực không thể thiếu!' })
+  id: number;
+
+  @IsString()
+  @IsOptional()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @IsEnum(Floor_Number, { message: 'Tầng nhà hàng không hợp lệ' })
+  @IsOptional()
+  floor_number: Floor_Number;
+}

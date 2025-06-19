@@ -1,34 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { TablesService } from './tables.service';
+import { Public } from 'src/common/decorator/public.decorator';
 import { CreateTableDto } from './dto/create-table.dto';
 import { UpdateTableDto } from './dto/update-table.dto';
 
 @Controller('tables')
 export class TablesController {
   constructor(private readonly tablesService: TablesService) {}
-
-  @Post()
-  create(@Body() createTableDto: CreateTableDto) {
-    return this.tablesService.create(createTableDto);
+  @Post('/create-table')
+  @Public()
+  createTable(@Body() data: CreateTableDto) {
+    return this.tablesService.createTable(data);
   }
 
-  @Get()
-  findAll() {
-    return this.tablesService.findAll();
+  @Delete('/delete-table/:tableId')
+  @Public()
+  deleteTable(@Param('tableId') tableId: string) {
+    return this.tablesService.deleteTable(Number(tableId));
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tablesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTableDto: UpdateTableDto) {
-    return this.tablesService.update(+id, updateTableDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tablesService.remove(+id);
+  @Patch('/update-table')
+  @Public()
+  updateTable(@Body() dataUpdate: UpdateTableDto) {
+    return this.tablesService.updateTable(dataUpdate);
   }
 }

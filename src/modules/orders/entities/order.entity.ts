@@ -1,4 +1,4 @@
-import { Employess } from 'src/modules/employess/entities/employess.entity';
+import { Employess } from 'src/modules/employees/entities/employees.entity';
 import { OrderItem } from 'src/modules/order_item/entities/order_item.entity';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { Table } from 'src/modules/tables/entities/table.entity';
@@ -85,8 +85,8 @@ export class Order {
   table: Table;
 
   @OneToMany(() => Payment, (payment) => payment.order, { nullable: true })
-  payment: Payment;
+  payment: Payment[];
 
   @OneToMany(() => OrderItem, (orderitem) => orderitem.order)
-  orderitem: OrderItem;
+  orderitem: OrderItem[];
 }

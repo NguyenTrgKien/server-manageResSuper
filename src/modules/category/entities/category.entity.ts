@@ -9,12 +9,15 @@ export class Category {
   @Column()
   name: string;
 
-  @Column()
-  desciprtion: string;
+  @Column({ nullable: true })
+  description: string;
 
-  @Column()
+  @Column({ default: true })
   isActive: boolean;
 
+  @Column({ unique: true })
+  code: string;
+
   @OneToMany(() => Dish, (dish) => dish.category)
-  dish: Dish;
+  dish: Dish[];
 }

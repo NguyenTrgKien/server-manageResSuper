@@ -45,8 +45,8 @@ export class Combo {
   updated_at: Date;
 
   @OneToMany(() => OrderItem, (orderitem) => orderitem.combo)
-  orderitem: OrderItem;
+  orderitem: OrderItem[];
 
   @OneToMany(() => ComboItem, (comboitem) => comboitem.combo)
-  comboitem: ComboItem;
+  comboitem: ComboItem[];
 }

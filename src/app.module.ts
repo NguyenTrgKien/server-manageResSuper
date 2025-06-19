@@ -5,9 +5,8 @@ import { UsersModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { ConfigModule } from '@nestjs/config';
-import { RolesModule } from './modules/roles/roles.module';
 import { CustomersModule } from './modules/customers/customers.module';
-import { EmployessModule } from './modules/employess/employess.module';
+import { EmployessModule } from './modules/employees/employees.module';
 import { ReservationModule } from './modules/reservation/reservation.module';
 import { TablesModule } from './modules/tables/tables.module';
 import { AreasModule } from './modules/areas/areas.module';
@@ -18,6 +17,10 @@ import { DishsModule } from './modules/dishs/dishs.module';
 import { CategoryModule } from './modules/category/category.module';
 import { CombosModule } from './modules/combos/combos.module';
 import { ComboItemModule } from './modules/combo_item/combo_item.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { DishimageModule } from './modules/dishimage/dishimage.module';
 dotenv.config();
 
 @Module({
@@ -41,7 +44,6 @@ dotenv.config();
       synchronize: true, //Chỉ dùng trong dev!
     }),
     UsersModule,
-    RolesModule,
     CustomersModule,
     EmployessModule,
     ReservationModule,
@@ -54,8 +56,11 @@ dotenv.config();
     CategoryModule,
     CombosModule,
     ComboItemModule,
+    AuthModule,
+    CloudinaryModule,
+    DishimageModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CloudinaryService],
 })
 export class AppModule {}

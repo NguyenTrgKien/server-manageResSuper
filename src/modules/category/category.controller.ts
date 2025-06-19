@@ -1,34 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Delete, Param } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { Public } from 'src/common/decorator/public.decorator';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  @Post('/create-category')
+  @Public()
+  createCategory(@Body() createCategoryDto: CreateCategoryDto) {
+    return this.categoryService.createCategory(createCategoryDto);
   }
 
-  @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  @Patch('/update-category')
+  @Public()
+  updateCategory(@Body() dataUpdate: UpdateCategoryDto) {
+    return this.categoryService.updateCategory(dataUpdate);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  @Delete('/delete-category/:categoryId')
+  @Public()
+  deleteTable(@Param('categoryId') categoryId: string) {
+    return this.categoryService.deleteCategory(Number(categoryId));
   }
 }

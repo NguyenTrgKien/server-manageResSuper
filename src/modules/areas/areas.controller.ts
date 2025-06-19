@@ -1,34 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Delete, Param, Patch } from '@nestjs/common';
 import { AreasService } from './areas.service';
 import { CreateAreaDto } from './dto/create-area.dto';
+import { Public } from 'src/common/decorator/public.decorator';
 import { UpdateAreaDto } from './dto/update-area.dto';
 
 @Controller('areas')
 export class AreasController {
   constructor(private readonly areasService: AreasService) {}
 
-  @Post()
-  create(@Body() createAreaDto: CreateAreaDto) {
-    return this.areasService.create(createAreaDto);
+  @Post('/create-area')
+  @Public()
+  createArea(@Body() createAreaDto: CreateAreaDto) {
+    return this.areasService.createArea(createAreaDto);
   }
 
-  @Get()
-  findAll() {
-    return this.areasService.findAll();
+  @Delete('/delete-area/:areaId')
+  @Public()
+  deleteArea(@Param('areaId') areaId: string) {
+    return this.areasService.deleteArea(Number(areaId));
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.areasService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAreaDto: UpdateAreaDto) {
-    return this.areasService.update(+id, updateAreaDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.areasService.remove(+id);
+  @Patch('/update-area')
+  @Public()
+  updateArea(@Body() dataUpdate: UpdateAreaDto) {
+    return this.areasService.updateArea(dataUpdate);
   }
 }

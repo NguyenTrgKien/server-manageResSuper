@@ -46,11 +46,11 @@ export class Table {
   note: string;
 
   @OneToMany(() => Order, (order) => order.table)
-  order: Order;
+  order: Order[];
 
   @ManyToOne(() => Area, (area) => area.table)
   area: Area;
 
   @OneToMany(() => Reservation, (reservation) => reservation.table)
-  reservation: Reservation;
+  reservation: Reservation[];
 }

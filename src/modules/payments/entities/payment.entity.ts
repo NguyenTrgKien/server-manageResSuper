@@ -1,4 +1,4 @@
-import { Employess } from 'src/modules/employess/entities/employess.entity';
+import { Employess } from 'src/modules/employees/entities/employees.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
