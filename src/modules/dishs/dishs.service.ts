@@ -1,8 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dish } from './entities/dish.entity';
 import { CreateDishDto } from './dto/create-dish.dto';
-import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { DataSource, FindOptionsWhere, Like, Repository } from 'typeorm';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { DishimageService } from '../dishimage/dishimage.service';
 import { UpdateDishDto } from './dto/update-dish.dto';
@@ -17,56 +21,68 @@ export class DishsService {
     private readonly categoryService: CategoryService,
     private readonly cloudinaryService: CloudinaryService,
     private readonly dishimageService: DishimageService,
+    private dataResource: DataSource,
   ) {}
 
   async createDish(data: CreateDishDto, files: Express.Multer.File[]) {
-    if (!files || !files.length) {
-      throw new BadRequestException(
-        'Vui lòng tải lên ít nhất một hình ảnh món ăn!',
+    const queryRunner = this.dataResource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      if (!files || !files.length) {
+        throw new BadRequestException(
+          'Vui lòng tải lên ít nhất một hình ảnh món ăn!',
+        );
+      }
+      const {
+        name,
+        description,
+        price,
+        cost_price,
+        proccessing_time,
+        categoryId,
+      } = data;
+      const categoryCode =
+        await this.categoryService.findCategoryById(categoryId);
+      if (!categoryCode) {
+        throw new BadRequestException('Danh mục không tồn tại!');
+      }
+      const totalDish = await this.dishRepository.count();
+      const nextDish = `${categoryCode.code}_${totalDish.toString().padStart(4, '0')}`;
+
+      const newDish = queryRunner.manager.create(Dish, {
+        name,
+        description,
+        price,
+        cost_price,
+        proccessing_time,
+        dish_code: nextDish,
+        category: categoryCode,
+      });
+
+      const dish = await this.dishRepository.save(newDish);
+      const images_urls =
+        await this.cloudinaryService.uploadMultipleFile(files);
+      await this.dishimageService.createImage(
+        images_urls,
+        dish,
+        queryRunner.manager,
       );
-    }
-    const {
-      name,
-      description,
-      price,
-      cost_price,
-      proccessing_time,
-      categoryId,
-    } = data;
-    const categoryCode =
-      await this.categoryService.findCategoryById(categoryId);
-    if (!categoryCode) {
-      throw new BadRequestException('Danh mục không tồn tại!');
-    }
-    const totalDish = await this.dishRepository.count();
-    const nextDish = `${categoryCode.code}_${totalDish.toString().padStart(4, '0')}`;
-
-    const newDish = this.dishRepository.create({
-      name,
-      description,
-      price,
-      cost_price,
-      proccessing_time,
-      dish_code: nextDish,
-      category: categoryCode,
-    });
-
-    const dish = await this.dishRepository.save(newDish);
-    const images_urls = await this.cloudinaryService.uploadMultipleFile(files);
-    const createImage = await this.dishimageService.createImage(
-      images_urls,
-      dish,
-    );
-    if (createImage.status) {
+      await queryRunner.commitTransaction();
       return {
         status: true,
         message: 'Tạo món ăn thành công!',
       };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      console.log(error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Lỗi không thể tạo món ăn!');
+    } finally {
+      await queryRunner.release();
     }
-    return {
-      status: false,
-      message: 'Tạo món ăn thất bại!',
-    };
   }
 
   async getDish(query: QueryDishDto) {
@@ -146,5 +162,20 @@ export class DishsService {
       status: true,
       message: 'Xóa món ăn thành công!',
     };
+  }
+
+  async finDishById(dishId: number) {
+    if (!dishId) {
+      throw new BadRequestException('Không có id của món ăn!');
+    }
+    const dish = await this.dishRepository.findOne({
+      where: {
+        id: dishId,
+      },
+    });
+    if (!dish) {
+      throw new BadRequestException('Không có món ăn này!');
+    }
+    return dish;
   }
 }

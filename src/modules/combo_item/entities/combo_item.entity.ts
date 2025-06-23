@@ -10,7 +10,7 @@ export class ComboItem {
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({ nullable: true })
   note: string;
 
   @ManyToOne(() => Combo, (combo) => combo.comboitem)

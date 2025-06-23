@@ -1,5 +1,6 @@
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
+import { Reservation } from 'src/modules/reservation/entities/reservation.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
@@ -26,9 +27,6 @@ export class Employess {
   employes_code: string;
 
   @Column()
-  fullName: string;
-
-  @Column()
   phone: string;
 
   @Column()
@@ -50,6 +48,9 @@ export class Employess {
   })
   status: string;
 
+  @Column({ nullable: true })
+  publicId: string;
+
   @OneToOne(() => User, (user) => user.employes)
   @JoinColumn()
   user: User;
@@ -59,4 +60,7 @@ export class Employess {
 
   @OneToMany(() => Payment, (payment) => payment.employes)
   payment: Payment[];
+
+  @OneToMany(() => Reservation, (reservation) => reservation.employee)
+  reservation: Reservation;
 }

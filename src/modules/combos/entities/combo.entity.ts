@@ -29,6 +29,9 @@ export class Combo {
   @Column()
   image: string;
 
+  @Column({ nullable: true })
+  publicId: string;
+
   @Column({ default: false })
   is_featured: boolean; // Combo nổi bật
 
@@ -43,6 +46,9 @@ export class Combo {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Column({ default: true })
+  is_Actice: boolean;
 
   @OneToMany(() => OrderItem, (orderitem) => orderitem.combo)
   orderitem: OrderItem[];

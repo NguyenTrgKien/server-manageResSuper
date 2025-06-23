@@ -9,6 +9,8 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { MailModule } from 'src/mail/mail.module';
+import { PasswordResetTokenModule } from '../password_reset_token/password_reset_token.module';
 
 @Module({
   controllers: [AuthController],
@@ -25,6 +27,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
   imports: [
     UsersModule,
     PassportModule,
+    MailModule,
+    PasswordResetTokenModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         global: true,

@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Public } from 'src/common/decorator/public.decorator';
 import { UserRequest } from 'src/common/interface/user-request.interface';
+import { ChangePassworDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,17 +16,15 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @Get('/get-profile')
-  // @Public()
-  getProfile(@Request() req: UserRequest) {
-    const { id, role, email } = req.user;
-    console.log(req.user);
-    return {
-      user: {
-        id,
-        email,
-        role,
-      },
-    };
+  @Post('/forgot-password')
+  @Public()
+  forgotPassword(@Body('email') email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @Post('/reset-password')
+  @Public()
+  changePassword(@Body() dataResetPassword: ChangePassworDto) {
+    return this.authService.changePassword(dataResetPassword);
   }
 }

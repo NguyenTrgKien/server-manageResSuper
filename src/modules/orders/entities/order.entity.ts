@@ -1,6 +1,7 @@
 import { Employess } from 'src/modules/employees/entities/employees.entity';
 import { OrderItem } from 'src/modules/order_item/entities/order_item.entity';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
+import { Reservation } from 'src/modules/reservation/entities/reservation.entity';
 import { Table } from 'src/modules/tables/entities/table.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
@@ -9,6 +10,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,7 +22,7 @@ export enum OrderType {
 
 export enum OrderStatus {
   PENDING = 'pending', // Đơn mới tạo, chưa xác nhận
-  COMFIMED = 'confirmed', // Đã xác nhận đơn hàng
+  CONFIRMED = 'confirmed', // Đã xác nhận đơn hàng
   PREPARING = 'preparing', // Đang chuẩn bị
   READY = 'ready', // Đã sẵn sàng
   COMPLETED = 'completed', // Đã hoàn thành(phục vụ xong)
@@ -51,17 +53,20 @@ export class Order {
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   order_status: OrderStatus;
 
-  @Column()
-  user_name: string;
-
-  @Column()
-  user_phone: string;
-
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-  total_price: number;
+  total_amount: number;
 
-  @Column()
+  @Column({ nullable: true })
   note: string;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  customer_name: string;
+
+  @Column({ nullable: true })
+  customer_phone: string;
 
   @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.UNPAID })
   payment_status: PaymentStatus;
@@ -84,9 +89,14 @@ export class Order {
   @ManyToOne(() => Table, (table) => table.order, { nullable: true })
   table: Table;
 
-  @OneToMany(() => Payment, (payment) => payment.order, { nullable: true })
+  @ManyToOne(() => Payment, (payment) => payment.order, { nullable: true })
   payment: Payment[];
 
   @OneToMany(() => OrderItem, (orderitem) => orderitem.order)
   orderitem: OrderItem[];
+
+  @OneToOne(() => Reservation, (reservation) => reservation.orders, {
+    nullable: true,
+  })
+  reservation: Reservation;
 }

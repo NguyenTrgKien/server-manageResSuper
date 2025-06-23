@@ -17,5 +17,6 @@ import { CategoryModule } from '../category/category.module';
     DishimageModule,
     CategoryModule,
   ],
+  exports: [DishsService],
 })
 export class DishsModule {}

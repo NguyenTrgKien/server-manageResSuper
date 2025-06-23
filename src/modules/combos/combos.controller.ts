@@ -1,34 +1,52 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseInterceptors,
+  UploadedFile,
+  Patch,
+  Get,
+} from '@nestjs/common';
 import { CombosService } from './combos.service';
 import { CreateComboDto } from './dto/create-combo.dto';
+import { Public } from 'src/common/decorator/public.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateComboDto } from './dto/update-combo.dto';
+import { InActiveComboDto } from './dto/inactive-combo.dto';
 
 @Controller('combos')
 export class CombosController {
   constructor(private readonly combosService: CombosService) {}
 
-  @Post()
-  create(@Body() createComboDto: CreateComboDto) {
-    return this.combosService.create(createComboDto);
+  @Post('/create-combo')
+  @Public()
+  @UseInterceptors(FileInterceptor('image'))
+  createCombo(
+    @Body() dataCreateCombo: CreateComboDto,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.combosService.createCombo(dataCreateCombo, image);
   }
 
-  @Get()
-  findAll() {
-    return this.combosService.findAll();
+  @Patch('/update-combo')
+  @Public()
+  @UseInterceptors(FileInterceptor('image'))
+  updateCombo(
+    @Body() dataUpdateCombo: UpdateComboDto,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.combosService.updateCombo(dataUpdateCombo, image);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.combosService.findOne(+id);
+  @Patch('/inactive-combo')
+  @Public()
+  inActive(@Body() body: InActiveComboDto) {
+    return this.combosService.inActive(Number(body.id));
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateComboDto: UpdateComboDto) {
-    return this.combosService.update(+id, updateComboDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.combosService.remove(+id);
+  @Get('/get-combos')
+  @Public()
+  async getCombos() {
+    return await this.combosService.getCombos();
   }
 }

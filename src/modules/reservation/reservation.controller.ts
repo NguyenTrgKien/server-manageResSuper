@@ -1,34 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Req, Patch } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
+import { UserReponseJwt } from '../orders/orders.service';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 
 @Controller('reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
-  @Post()
-  create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationService.create(createReservationDto);
+  @Post('/create-reservation')
+  createReservation(
+    @Body() dataCreateReservation: CreateReservationDto,
+    @Req() req: { user: UserReponseJwt },
+  ) {
+    const infoUser = req.user;
+    return this.reservationService.createReservation(
+      dataCreateReservation,
+      infoUser,
+    );
   }
 
-  @Get()
-  findAll() {
-    return this.reservationService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reservationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
-    return this.reservationService.update(+id, updateReservationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reservationService.remove(+id);
+  @Patch('/update-reservation-status')
+  updateReservationStatus(@Body() reservationUpdate: UpdateReservationDto) {
+    return this.reservationService.updateReservationStatus(reservationUpdate);
   }
 }

@@ -1,6 +1,8 @@
 import { Customer } from 'src/modules/customers/entities/customer.entity';
 import { Employess } from 'src/modules/employees/entities/employees.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
+import { PasswordResetToken } from 'src/modules/password_reset_token/entities/password_reset_token.entity';
+import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { Reservation } from 'src/modules/reservation/entities/reservation.entity';
 import {
   Column,
@@ -47,4 +49,13 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   order: Order[];
+
+  @OneToMany(() => Payment, (payment) => payment.user)
+  payment: Payment[];
+
+  @OneToMany(
+    () => PasswordResetToken,
+    (passwordResetToken) => passwordResetToken.user,
+  )
+  passwordResetToken: PasswordResetToken;
 }

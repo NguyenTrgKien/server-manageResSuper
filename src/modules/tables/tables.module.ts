@@ -9,5 +9,6 @@ import { Area } from '../areas/entities/area.entity';
   imports: [TypeOrmModule.forFeature([Table, Area])],
   controllers: [TablesController],
   providers: [TablesService],
+  exports: [TablesService],
 })
 export class TablesModule {}

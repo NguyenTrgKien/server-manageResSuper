@@ -83,4 +83,12 @@ export class TablesService {
       message: 'Cập nhật thông tin bàn thành công!',
     };
   }
+
+  async findTableById(tableId: number) {
+    return this.tableRepository.findOne({
+      where: {
+        id: tableId,
+      },
+    });
+  }
 }

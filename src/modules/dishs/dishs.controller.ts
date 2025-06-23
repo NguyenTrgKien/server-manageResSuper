@@ -40,6 +40,7 @@ export class DishsController {
 
   @Patch('/update-dish')
   @UseInterceptors(FilesInterceptor('images'))
+  @Public()
   updateDish(
     @Body() dataUpdate: UpdateDishDto,
     @UploadedFiles() files: Express.Multer.File[],

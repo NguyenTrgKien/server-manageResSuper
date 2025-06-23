@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dishimage } from './entities/dishimage.entity';
-import { In, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { Dish } from '../dishs/entities/dish.entity';
 import {
   CloudinaryResponse,
@@ -19,16 +19,21 @@ export class DishimageService {
     private readonly dishImageRepository: Repository<Dishimage>,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
-  async createImage(images: CloudinaryResponse[], dish: Dish) {
-    const createImages = images.map((image) => {
-      const newImage = this.dishImageRepository.create({
-        image_url: image.url,
-        dish: dish,
-        publicId: image.publicId,
-      });
-      return this.dishImageRepository.save(newImage);
-    });
-    await Promise.all(createImages);
+  async createImage(
+    images: CloudinaryResponse[],
+    dish: Dish,
+    manager?: EntityManager,
+  ) {
+    const createImages = images.map((image) => ({
+      image_url: image.url,
+      dish: dish,
+      publicId: image.publicId,
+    }));
+    if (manager) {
+      await manager.insert(Dishimage, createImages);
+    } else {
+      await this.dishImageRepository.insert(createImages);
+    }
     return {
       status: true,
       message: 'Thêm hình ảnh thành công!',

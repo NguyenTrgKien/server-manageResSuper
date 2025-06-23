@@ -10,10 +10,6 @@ import { EmployesStatus } from '../entities/employees.entity';
 
 export class CreateEmployessDto {
   @IsString()
-  @IsNotEmpty({ message: 'Họ tên nhân viên không được thiếu!' })
-  fullName: string;
-
-  @IsString()
   @IsNotEmpty({ message: 'Số điện thoại nhân viên không được thiếu!' })
   phone: string;
 
