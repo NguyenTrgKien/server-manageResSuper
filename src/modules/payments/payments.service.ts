@@ -13,6 +13,8 @@ import { UsersService } from '../users/users.service';
 import { Employess } from '../employees/entities/employees.entity';
 import { User } from '../users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
+import { MomoService } from '../momo/momo.service';
+import { createPaymentMomo } from './dto/create-payment-momo.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -22,6 +24,7 @@ export class PaymentsService {
     private readonly orderService: OrdersService,
     private readonly userService: UsersService,
     private readonly mailService: MailService,
+    private readonly momoService: MomoService,
     private dataSource: DataSource,
   ) {}
   async createPayment(
@@ -101,5 +104,16 @@ export class PaymentsService {
     } finally {
       await queryRunner.release();
     }
+  }
+  async createPaymentWithMomo(dataCreatePaymentMomo: createPaymentMomo) {
+    return await this.momoService.createPaymentWithMomo(
+      dataCreatePaymentMomo.amount,
+    );
+  }
+  callbackPaymentMomo(dataCallback: unknown) {
+    console.log(dataCallback);
+    return {
+      message: 'Giao dịch thành công!',
+    };
   }
 }

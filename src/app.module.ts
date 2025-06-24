@@ -27,6 +27,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MailModule } from './mail/mail.module';
 import { PasswordResetTokenModule } from './modules/password_reset_token/password_reset_token.module';
+import { MomoModule } from './modules/momo/momo.module';
 dotenv.config();
 
 @Module({
@@ -94,6 +95,7 @@ dotenv.config();
     TimeFrameModule,
     MailModule,
     PasswordResetTokenModule,
+    MomoModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],

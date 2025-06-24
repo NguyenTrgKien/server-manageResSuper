@@ -6,6 +6,7 @@ import { Payment } from './entities/payment.entity';
 import { UsersModule } from '../users/users.module';
 import { OrdersModule } from '../orders/orders.module';
 import { MailModule } from 'src/mail/mail.module';
+import { MomoModule } from '../momo/momo.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { MailModule } from 'src/mail/mail.module';
     UsersModule,
     OrdersModule,
     MailModule,
+    MomoModule,
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService],
